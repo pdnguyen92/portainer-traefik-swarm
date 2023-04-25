@@ -114,9 +114,9 @@ services:
       #- "traefik.http.services.edge.loadbalancer.server.port=8000"
       #- "traefik.http.routers.edge.service=edge"
 
- networks:
+networks:
   traefik-public:
     external: true
 
- volumes:
-   data:
+volumes:
+  data:
