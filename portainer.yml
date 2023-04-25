@@ -1,4 +1,4 @@
-version: "3.3"
+version: "3.2"
 services:
   traefik:
     image: traefik:v2.10.0
@@ -6,12 +6,12 @@ services:
       - --log.level=INFO
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
-      - --providers.docker
+      - --providers.docker=true
       - --providers.docker.exposedbydefault=false
       - --providers.docker.swarmmode=true
       - --providers.docker.network=traefik-public
       - --api
-      - --api.dashboard=true
+      #- --api.dashboard=true
     ports:
       - 80:80
       - 443:443
@@ -19,25 +19,14 @@ services:
       - traefik-public
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/traefik:/etc/traefik
     deploy:
       labels:
         - traefik.enable=true
         - traefik.http.routers.traefik.rule=Host(`traefik.pnt.home`)
-        - traefik.http.routers.traefik.service=api@internal
+        #- traefik.http.routers.traefik.service=api@internal
         - traefik.http.services.traefik.loadbalancer.server.port=8080
         - traefik.http.routers.traefik.entrypoints=web
-  whoami:
-    image: containous/whoami:v1.5.0
-    networks:
-      - traefik-public
-    command:
-      - --port=8082
-    deploy:
-      labels:
-        - traefik.enable=true
-        - traefik.http.routers.whoami.rule=Host(`whoami.pnt.home`)
-        - traefik.http.services.whoami.loadbalancer.server.port=8082
-        - traefik.http.routers.whoami.entrypoints=web
   agent:
     image: portainer/agent
     environment:
