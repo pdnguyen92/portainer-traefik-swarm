@@ -72,7 +72,7 @@ services:
         # Change the password here
         #- "traefik.http.middlewares.auth.basicauth.users=admin:changeme" # user/password
         
- agent:
+  agent:
     image: portainer/agent
     environment:
       # REQUIRED: Should be equal to the service name prefixed by "tasks." when
@@ -90,7 +90,7 @@ services:
       placement:
         constraints: [node.platform.os == linux]
 
- portainer:
+  portainer:
     image: portainer/portainer-ce
     command: -H tcp://tasks.agent:9001 --tlsskipverify
     volumes:
@@ -114,9 +114,9 @@ services:
       #- "traefik.http.services.edge.loadbalancer.server.port=8000"
       #- "traefik.http.routers.edge.service=edge"
 
-networks:
+ networks:
   traefik-public:
     external: true
 
-volumes:
+ volumes:
    data:
