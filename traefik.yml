@@ -150,4 +150,4 @@ providers:
     #
     exposedByDefault: false
     swarmMode: true
-    network: traefik-public
+    network: traefik_public
