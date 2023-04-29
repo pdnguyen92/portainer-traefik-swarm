@@ -151,3 +151,17 @@ providers:
     exposedByDefault: false
     swarmMode: true
     network: traefik_public
+    
+################################################################
+# Certificate Resolver
+################################################################
+certificatesResolvers:
+  le:
+    acme:
+      email: pnguyen92.important@gmail.com
+      storage: acme.json
+      tlsChallenge: {}
+      dnsChallenge:
+        provider: "cloudfare"
+        delayBeforeCheck: 0
+  
