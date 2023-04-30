@@ -153,9 +153,9 @@
   # Default: true
   #
    exposedByDefault = false
-   swarmMode: true
-   watch: true
-   network: traefik_proxy
+   swarmMode = true
+   watch = true
+   network = traefik_proxy
    
 ################################################################
 # Certificate Resolvers configuration
