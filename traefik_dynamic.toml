@@ -1,6 +1,6 @@
 [http.middlewares.simpleAuth.basicAuth]
   users = [
-    "admin:$apr1$ruca84Hq$mbjdMZBAG.KWn7vfN/SNK/"
+    "admin:$apr1$NAtU/HDE$0BS2zZrg7Dz4N8Tx6M51E1"
   ]
   
 [http.routers.api]
@@ -9,4 +9,4 @@
   middlewares = ["simpleAuth"]
   service = "api@internal"
   [http.routers.api.tls]
-    certResolver = "le"
+    certResolver = "letsencrypt"
