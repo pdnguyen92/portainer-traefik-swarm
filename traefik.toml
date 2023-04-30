@@ -125,13 +125,13 @@
   # Default: "traefik"
   #
   # entryPoint = "traefik"
-
+[providers]
 ################################################################
 # Docker configuration backend
 ################################################################
 
 # Enable Docker configuration backend
-[providers.docker]
+ [providers.docker]
 
   # Docker server endpoint. Can be a tcp or a unix socket endpoint.
   #
@@ -156,7 +156,15 @@
    swarmMode = true
    watch = true
    network = "traefik_proxy"
-   
+
+################################################################
+# Provider files configuration
+################################################################
+ [providers.file]
+  directory = "/etc/traefik/"
+  filename = "traefik_dynamic.toml"
+  watch = true
+
 ################################################################
 # Certificate Resolvers configuration
 ################################################################
@@ -168,10 +176,3 @@
   provider = "cloudfare"
   resolvers = [ "1.1.1.1:53", "1.0.0.1:53" ]
   delayBeforeCheck = 0
-  
-################################################################
-# Provider files configuration
-################################################################
-[providers.file]
-  filename = "traefik_dynamic.toml"
-  watch = true
