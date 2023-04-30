@@ -145,7 +145,7 @@
   # Optional
   # Default: "Host(`{{ normalize .Name }}`)"
   #
-  # defaultRule = "Host(`{{ normalize .Name }}.docker.localhost`)"
+   defaultRule = "Host(`{{ normalize .Name }}.pnt-life.com`)"
 
   # Expose containers by default in traefik
   #
@@ -160,12 +160,13 @@
 ################################################################
 # Certificate Resolvers configuration
 ################################################################
-[certificatesResolvers.le.acme]
+[certificatesResolvers.letsencrypt.acme]
   email = "pnguyen92.important@gmail.com"
-  storage = "acme.json"
+  storage = "/etc/traefik/acme.json"
   #[certificatesResolvers.le.acme.tlsChallenge]
-  [certificatesResolvers.le.acme.dnsChallenge]
+  [certificatesResolvers.letsencrypt.acme.dnsChallenge]
   provider = "cloudfare"
+  resolvers = [ "1.1.1.1:53", "1.0.0.1:53" ]
   delayBeforeCheck = 0
   
 ################################################################
@@ -173,3 +174,4 @@
 ################################################################
 [providers.file]
   filename = "traefik_dynamic.toml"
+  watch = true
