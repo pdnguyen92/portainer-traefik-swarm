@@ -1,0 +1,58 @@
+version: "3.9"
+services:
+  traefik-service:
+    image: traefik:v2.10.0
+    environment:
+      - CF_API_EMAIL=pnguyen92@protonmail.com
+      - CF_DNS_API_TOKEN=hozlkNiMVuURYoU8DM-WUAbTB2CDxlEXnbCi2lCP
+   #command:  **
+    ports:
+      - 80:80
+      - 443:443
+      #- 8081:8081
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/traefik/:/etc/traefik/
+      #- /etc/traefik/dynamic_config.yml:/etc/traefik/dynamic_config.yml
+      - /etc/letsencrypt:/etc/letsencrypt
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+          # Needs to reference the api@internal service to access the dashboard.
+        - "traefik.enable=true"
+          # http router
+        - "traefik.http.routers.to-traefik-http.rule=Host(`traefik.pnt-life.com`)"
+        - "traefik.http.routers.to-traefik-http.entrypoints=http"
+        - "traefik.http.routers.to-traefik-http.middlewares=auth"
+        - "traefik.http.routers.to-traefik-http.service=api@internal"
+          # Https router
+        - "traefik.http.routers.to-traefik-https.rule=Host(`traefik.pnt-life.com`)"
+        - "traefik.http.routers.to-traefik-https.entrypoints=https"
+        - "traefik.http.routers.to-traefik-https.middlewares=auth"
+        - "traefik.http.routers.to-traefik-https.service=api@internal"
+          # TLS Resolver
+        - "traefik.http.routers.to-traefik-https.tls=true"
+        - "traefik.http.routers.to-traefik-https.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.to-traefik-https.tls.domains[0].main=pnt-life.com"
+        - "traefik.http.routers.to-traefik-https.tls.domains[0].sans=*.pnt-life.com"
+          # Add simple authentication, not recommended for production use.
+        - "traefik.http.middlewares.auth.basicauth.users=admin:$$apr1$$NAtU/HDE$$0BS2zZrg7Dz4N8Tx6M51E1"
+          # Add a dummy service with a random port for traefik to work on itself. This only applies to traefik itself
+          # If you are using the lable for other services (i.e. whoami), then it needs to be a valid port that
+          # that the service is actually listening to.
+        - "traefik.http.services.traefik-service.loadbalancer.server.port=1122"
+        #- "traefik.http.middlewares.redirect.redirectregex.regex=^http://(.*)"
+        #- "traefik.http.middlewares.redirect.redirectregex.replacement=https://$$1"
+        #- "traefik.http.middlewares.redirect.redirectregex.permanent=true"
+        #- "traefik.http.middlewares.ratelimit.ratelimit.average=10"
+        #- "traefik.http.middlewares.ratelimit.ratelimit.burst=20"
+        #- "traefik.http.middlewares.limitconn.connections.limit=10"
+        #- "traefik.http.middlewares.limitconn.connections.duration=1m"
+    networks:
+      - traefik_proxy
+
+networks:
+  traefik_proxy:
+    external: true
