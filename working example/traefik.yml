@@ -1,0 +1,106 @@
+# Static Config
+debug: false
+logLevel: INFO
+
+#defaultEntryPoints:
+  #- http
+  #- https
+
+entryPoints:
+  http:
+    address: ':80'
+  https:
+    address: ':443'
+    #http:
+    ##########################################################################################################################
+    # The list of middlewares that are prepended by default to the list of middlewares of each router associated to the named entry point.
+    ######################################################################################################
+    #  middlewares:
+    #    - auth@file
+    #    - strip@file
+
+    #########################################################################################
+    # default TLS configuration applied to all routers associated with the named entry point.
+    # If a TLS section (i.e. any of its fields) is user-defined, then the default configuration does not apply at all.
+    # The TLS section is the same as the on in dynamic confiration file
+    # #########################################################################################
+    #  tls:
+    #   options: foobar
+    #   certResolver: leresolver
+    #   domains:
+    #      - main: example.com
+    #        sans:
+    #          - foo.example.com
+    #          - bar.example.com
+    #      - main: test.com
+    #        sans:
+    #          - foo.test.com
+    #          - bar.test.com
+
+
+###########################
+# API / Dashboard
+###########################
+api: {}
+
+providers:
+  docker:
+    # swarm classic (1.12-)
+    #endpoint: "tcp://127.0.0.1:2375"
+    # docker swarm mode (1.12+)
+    endpoint: "unix:///var/run/docker.sock"
+    swarmMode: true
+    exposedByDefault: false
+    #useBindPortIP: true #you tell Traefik to use the IP/Port attached to the container's binding instead of its inner network IP/Port.
+    #defaultRule: "Host(`{{ .Name }}.pnt-life.com`)" #The service name can be accessed with the Name identifier.
+    watch: true
+      #tls:
+      #cert: path/to/foo.cert #cert is the path to the public certificate used for the secure connection to Docker. When using this option, setting the key option is required.
+      #key: path/to/foo.key
+      #insecureSkipVerify: true #the TLS connection to Docker accepts any certificate presented by the server regardless of the hostnames it covers.
+  #file:
+    #directory: "/etc/traefik/"
+  #  filename: "/etc/traefik/dynamic_config.yml"
+  #  watch: true
+      #http:
+      #middlewares:
+      #redirect-to-https:
+      #redirectScheme:
+      #  scheme: https
+
+############################
+# Environment Vars
+############################
+#env:
+#  LETSENCRYPT_EMAIL:
+
+
+############################
+# letsencrypt
+############################
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: pnguyen92@protonmail.com
+      storage: /etc/letsencrypt/acme.json
+      caServer: 'https://acme-staging-v02.api.letsencrypt.org/directory'
+      dnsChallenge:
+        provider: cloudflare
+        delayBeforeCheck: 0
+        resolvers:
+          - '1.1.1.1:53'
+          - '1.0.0.1:53'
+      httpChallenge:
+        entryPoint: https
+        #cloudflare:
+            #email: pnguyen92@protonmail.com
+            #apiToken: hozlkNiMVuURYoU8DM-WUAbTB2CDxlEXnbCi2lCP
+      #challengeOptions:
+            #- key: CF_API_EMAIL
+            #value: pnguyen92@protonmail.com
+            #- key: CF_DNS_API_TOKEN
+            #value: AxX8Vp_Hfl2TB5G-IB2PbJ_Y_eddoZ3kACbdLXe7
+              #dynamic:
+              #toml:
+              #filename: /etc/traefik/traefik_dynamic.toml
+              #watch: true
