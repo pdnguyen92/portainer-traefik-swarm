@@ -1,0 +1,64 @@
+log:
+  level: INFO
+
+entryPoints:
+  http:
+    address: ':80'
+  https:
+    address: ':443'
+serverTransport:
+  insecureSkipVerify: true
+
+###########################
+# API / Dashboard
+###########################
+api: {}
+
+providers:
+  docker:
+    # swarm classic (1.12-)
+    #endpoint: "tcp://127.0.0.1:2375"
+    # docker swarm mode (1.12+)
+    endpoint: "unix:///var/run/docker.sock"
+    swarmMode: true
+    exposedByDefault: false
+    #useBindPortIP: true #you tell Traefik to use the IP/Port attached to the container's binding instead of its inner network IP/Port.
+    #defaultRule: "Host(`{{ .Name }}.pnt-life.com`)" #The service name can be accessed with the Name identifier.
+    watch: true
+      #tls:
+      #cert: path/to/foo.cert #cert is the path to the public certificate used for the secure connection to Docker. When using this option, setting the key option is required.
+      #key: path/to/foo.key
+      #insecureSkipVerify: true #the TLS connection to Docker accepts any certificate presented by the server regardless of the hostnames it covers.
+  file:
+    #directory: "/etc/traefik/"
+    filename: "/etc/traefik/dynamic_config.yml"
+    watch: true
+      #http:
+      #middlewares:
+      #redirect-to-https:
+      #redirectScheme:
+      #  scheme: https
+
+############################
+# Plugins
+############################
+experimental:
+  plugins:
+    cloudflarewarp:
+      moduleName: "github.com/BetterCorp/cloudflarewarp"
+      version: "v1.3.3"
+############################
+# letsencrypt
+############################
+certificatesResolvers:
+  le:
+    acme:
+      email: pnguyen92@protonmail.com
+      storage: /etc/traefik/acme.json
+      caServer: 'https://acme-staging-v02.api.letsencrypt.org/directory'
+      dnsChallenge:
+        provider: cloudflare
+        delayBeforeCheck: 0
+        resolvers:
+          - '1.1.1.1:53'
+          - '1.0.0.1:53'
